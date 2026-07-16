@@ -1,1 +1,634 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <title>Forgeborn · Joel's Quest</title> <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> <style> :root{ --bg:#161210; --surface:#211a15; --surface-2:#2a211a; --surface-3:#332820; --border:rgba(255,255,255,0.10); --text:#f3e9d8; --muted:#b4a48b; --faint:#7c6f5c; --ember:#e8692c; --ember-deep:#b8481c; --ember-soft:rgba(232,105,44,0.16); --gold:#d9b23c; --steel:#7fa2c4; --steel-soft:rgba(127,162,196,.16); --crimson:#c1443c; --ok:#8fb45f; --radius:18px; --radius-sm:12px; --shadow:0 14px 30px rgba(0,0,0,0.35); } *{box-sizing:border-box;margin:0;padding:0;} html,body{min-height:100%;background:radial-gradient(1200px 600px at 50% -10%, rgba(232,105,44,0.10), transparent 60%), var(--bg);} body{font-family:'Inter',system-ui,sans-serif;color:var(--text);} button,input,textarea{font:inherit;color:inherit;} button{cursor:pointer;background:none;border:none;} input,textarea{width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:.75rem .9rem;} textarea{min-height:130px;resize:vertical;} .app{max-width:460px;margin:0 auto;min-height:100dvh;padding-bottom:90px;} .topbar{position:sticky;top:0;z-index:10;background:rgba(22,18,16,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 14px 10px;} .brandrow{display:flex;align-items:center;gap:12px;} .crest{width:42px;height:42px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;background:linear-gradient(155deg, var(--ember) 0%, var(--ember-deep) 100%);box-shadow:0 6px 16px rgba(232,105,44,.35);} .crest svg{width:21px;height:21px;color:#1a1310;} .brand h1{font-family:'Cinzel',serif;font-size:1.2rem;letter-spacing:.02em;line-height:1.1;} .brand p{color:var(--muted);font-size:11px;margin-top:2px;letter-spacing:.03em;text-transform:uppercase;} .lvlbadge{margin-left:auto;text-align:right;flex:0 0 auto;} .lvlbadge .lv{font-family:'Cinzel',serif;font-size:1.35rem;color:var(--gold);line-height:1;} .lvlbadge .ttl{font-size:10px;color:var(--muted);margin-top:2px;max-width:110px;} .xpwrap{margin-top:10px;} .xprow{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-bottom:5px;} .xpbar{height:8px;border-radius:6px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border);} .xpfill{height:100%;background:linear-gradient(90deg, var(--gold), var(--ember));border-radius:6px;transition:width .5s ease;} .streakrow{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;color:var(--muted);} .streakrow b{color:var(--ember);font-family:'Cinzel',serif;} .topnav{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px;} .navbtn{min-height:48px;border-radius:12px;background:var(--surface);border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:9.5px;} .navbtn.active{background:var(--ember);color:#1a1310;} .navbtn svg{width:15px;height:15px;} .content{padding:14px 14px 6px;} .page{display:none;} .page.active{display:block;} .section-title{font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.02em;margin-bottom:2px;} .section-sub{color:var(--muted);font-size:12.5px;margin-bottom:12px;line-height:1.4;} .tipcard{background:linear-gradient(155deg, var(--surface-2), var(--surface));border:1px solid rgba(232,105,44,.22);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden;} .tipcard::before{content:"";position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle, rgba(232,105,44,.18), transparent 70%);} .tiplabel{display:flex;align-items:center;gap:6px;color:var(--ember);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;font-weight:600;} .tiptext{font-size:14px;line-height:1.5;position:relative;} .tiprefresh{margin-top:10px;font-size:11px;color:var(--faint);} .tiprefresh button{color:var(--ember);text-decoration:underline;text-underline-offset:2px;} .statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px;} .statcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;} .statcard .icon{font-size:16px;margin-bottom:4px;} .statcard .sname{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);} .statcard .sval{font-family:'Cinzel',serif;font-size:1.25rem;margin-top:2px;} .statcard .sbar{height:4px;border-radius:3px;background:var(--surface-2);margin-top:6px;overflow:hidden;} .statcard .sbar span{display:block;height:100%;background:var(--steel);} .statcard.str .sbar span{background:var(--ember);} .statcard.res .sbar span{background:var(--gold);} .strip{display:flex;gap:7px;overflow:auto;padding-bottom:2px;margin-bottom:14px;} .spill{min-width:44px;padding:8px 6px;border-radius:12px;background:var(--surface);border:1px solid var(--border);text-align:center;color:var(--muted);flex:0 0 auto;} .spill.today{border-color:var(--ember);} .spill.sel{background:var(--ember);color:#1a1310;} .spill .d{font-size:10px;} .spill .n{font-size:14px;font-weight:700;margin-top:2px;} .spill .flame{font-size:10px;margin-top:3px;} .section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:14px;} .section-head,.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px;} .tag{display:inline-flex;align-items:center;gap:8px;min-height:36px;border-radius:12px;padding:0 12px;border:1px solid var(--border);font-size:13.5px;} .btn{min-height:38px;border-radius:12px;padding:0 14px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:13px;font-weight:500;} .btn-accent{background:var(--ember);color:#1a1310;border-color:transparent;font-weight:600;} .hint{color:var(--muted);font-size:12.5px;margin-top:8px;} .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;} .mini{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:12px;} .mini .label{color:var(--muted);font-size:11px;margin-bottom:5px;} .mini .value{font-size:20px;font-weight:700;font-family:'Cinzel',serif;} .mini .sub{margin-top:5px;font-size:11px;color:var(--faint);} .status-ok{color:var(--ok);} .status-bad{color:var(--crimson);} .water-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;} .water-grid button{min-height:46px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);} .water-grid button.active{background:var(--steel);color:#1a1310;border-color:transparent;} .mode-btn.active{background:var(--steel);color:#1a1310;border-color:transparent;} .labs-table{width:100%;border-collapse:collapse;font-size:12.5px;} .labs-table th,.labs-table td{text-align:left;vertical-align:top;padding:9px 6px;border-bottom:1px solid var(--border);} .labs-table th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;} .labs-wrap{overflow:auto;} .labs-note{color:var(--faint);font-size:11px;margin-top:10px;line-height:1.4;} .quest{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:13px 14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;transition:border-color .2s, background .2s;} .quest.done{background:var(--ember-soft);border-color:rgba(232,105,44,.35);} .qcheck{width:26px;height:26px;border-radius:8px;border:2px solid var(--faint);flex:0 0 auto;margin-top:2px;display:grid;place-items:center;transition:all .15s;} .quest.done .qcheck{background:var(--ember);border-color:var(--ember);} .qcheck svg{width:15px;height:15px;color:#1a1310;opacity:0;transition:opacity .15s;} .quest.done .qcheck svg{opacity:1;} .qbody{flex:1;} .qtitle{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:7px;} .qdesc{color:var(--muted);font-size:12.5px;line-height:1.4;margin-top:3px;} .qmeta{display:flex;gap:8px;margin-top:7px;flex-wrap:wrap;} .qxp{font-size:10.5px;color:var(--gold);background:rgba(217,178,60,.12);border:1px solid rgba(217,178,60,.25);border-radius:8px;padding:2px 7px;} .qboss{font-size:10.5px;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:2px 7px;} .bossblock{margin-top:20px;} .boss{background:linear-gradient(155deg, var(--surface-2), var(--surface));border:1px solid var(--border);border-radius:var(--radius);padding:14px 15px;margin-bottom:11px;box-shadow:var(--shadow);} .boss.defeated{opacity:.55;} .bosshead{display:flex;align-items:center;gap:10px;margin-bottom:8px;} .bossicon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex:0 0 auto;background:var(--surface-3);} .bossname{font-family:'Cinzel',serif;font-size:13px;} .bosssub{color:var(--faint);font-size:10px;margin-top:1px;} .bossflavor{color:var(--muted);font-size:11.5px;line-height:1.4;margin-bottom:9px;} .hpbar{height:11px;border-radius:6px;background:var(--surface-3);overflow:hidden;border:1px solid var(--border);} .hpfill{height:100%;background:linear-gradient(90deg, var(--crimson), #e08a3f);border-radius:6px;transition:width .5s ease;} .hprow{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:5px;} .defeatedtag{color:var(--ok);font-weight:600;} .toolbar{position:fixed;left:0;right:0;bottom:0;background:rgba(22,18,16,.96);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.06);padding:10px 14px max(10px, env(safe-area-inset-bottom));} .tool-row{max-width:460px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:9px;} .toast{position:fixed;left:50%;top:16px;transform:translate(-50%,-140%);z-index:50;background:linear-gradient(155deg, var(--ember), var(--ember-deep));color:#1a1310;padding:12px 20px;border-radius:14px;font-family:'Cinzel',serif;font-size:13px;font-weight:700;box-shadow:0 10px 26px rgba(232,105,44,.45);transition:transform .4s cubic-bezier(.2,1.4,.4,1);text-align:center;white-space:nowrap;} .toast.show{transform:translate(-50%,0);} @media (min-width:700px){ .app{max-width:760px;} .content{padding:18px 20px;} .grid2{grid-template-columns:repeat(4,1fr);} .topnav{grid-template-columns:repeat(6,90px);justify-content:start;} .tool-row{max-width:760px;} } </style> </head> <body> <div class="app"> <header class="topbar"> <div class="brandrow"> <div class="crest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 3.5 21 10l-2 2-1.5-1.5L9 19l-4 1 1-4 8.5-8.5L13 6l1.5-2.5Z"></path><path d="M3 21l4-1"></path></svg></div> <div><h1>Forgeborn</h1><p>Joel's Quest</p></div> <div class="lvlbadge"><div class="lv" id="lvNum">Lv 1</div><div class="ttl" id="lvTitle">Apprentice</div></div> </div> <div class="xpwrap"> <div class="xprow"><span id="xpNow">0 XP</span><span id="xpNext">100 XP to next level</span></div> <div class="xpbar"><div class="xpfill" id="xpFill" style="width:0%"></div></div> </div> <div class="streakrow"><span>🔥</span><span>Streak: <b id="streakNum">0</b> day(s)</span></div> <nav class="topnav" aria-label="Tracker pages"> <button class="navbtn active" data-page="summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"></path></svg><span>Summary</span></button> <button class="navbtn" data-page="labs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6M10 9V3h4v6l5 8a3 3 0 0 1-2.57 4.5H7.57A3 3 0 0 1 5 17l5-8Z"></path></svg><span>Labs</span></button> <button class="navbtn" data-page="steps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17c1.5 0 2-1 2-2.5S8 12 6.5 12 4 13 4 14.5 5.5 17 7 17Zm10-5c1.5 0 2-1 2-2.5S18 7 16.5 7 14 8 14 9.5 15.5 12 17 12Zm-6 8c1.5 0 2-1 2-2.5S12 15 10.5 15 8 16 8 17.5 9.5 20 11 20Z"></path></svg><span>Steps</span></button> <button class="navbtn" data-page="water"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11Z"></path></svg><span>Water</span></button> <button class="navbtn" data-page="quests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 3.5 21 10l-2 2-1.5-1.5L9 19l-4 1 1-4 8.5-8.5L13 6l1.5-2.5Z"></path></svg><span>Quests</span></button> <button class="navbtn" data-page="journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path></svg><span>Journal</span></button> </nav> </header> <main class="content"> <section class="page active" id="page-summary"> <div class="tipcard"> <div class="tiplabel">📜 Whisper of the Day</div> <div class="tiptext" id="tipText">Loading...</div> <div class="tiprefresh"><button id="newTip" type="button">another one</button></div> </div> <div class="statgrid"> <div class="statcard str"><div class="icon">💪</div><div class="sname">Strength</div><div class="sval" id="strVal">1</div><div class="sbar"><span id="strBar" style="width:0%"></span></div></div> <div class="statcard vit"><div class="icon">💧</div><div class="sname">Vitality</div><div class="sval" id="vitVal">1</div><div class="sbar"><span id="vitBar" style="width:0%"></span></div></div> <div class="statcard res"><div class="icon">🕯️</div><div class="sname">Resolve</div><div class="sval" id="resVal">1</div><div class="sbar"><span id="resBar" style="width:0%"></span></div></div> </div> <div class="section-title">Watching Closely</div> <div class="section-sub">From the 14.07.2026 Premier Integrated Labs report.</div> <div class="grid2"> <div class="mini"><div class="label">Total Cholesterol</div><div class="value">7.3</div><div class="sub status-bad">High · &lt;5.2 mmol/L</div></div> <div class="mini"><div class="label">LDL</div><div class="value">5.1</div><div class="sub status-bad">High · &lt;2.6 mmol/L</div></div> <div class="mini"><div class="label">Triglycerides</div><div class="value">2.5</div><div class="sub status-bad">High · &lt;1.7 mmol/L</div></div> <div class="mini"><div class="label">Chol/HDL Ratio</div><div class="value">6.6</div><div class="sub status-bad">High · &lt;3.5</div></div> <div class="mini"><div class="label">Urine Sp. Gravity</div><div class="value">≥1.030</div><div class="sub status-bad">Concentrated · 1.005–1.030</div></div> <div class="mini"><div class="label">eGFR</div><div class="value">&gt;90</div><div class="sub status-ok">Normal · &gt;90</div></div> </div> </section> <section class="page" id="page-labs"> <div class="section-title">Full Report</div> <div class="section-sub">Premier Integrated Labs · Collected 11.07.2026 · Reported 14.07.2026</div> <div class="section-card labs-wrap"> <table class="labs-table"> <thead><tr><th>Section</th><th>Test</th><th>Result</th><th>Range</th><th>Status</th></tr></thead> <tbody> <tr><td>Haematology</td><td>Haemoglobin</td><td>156 g/L</td><td>130–180</td><td class="status-ok">Normal</td></tr> <tr><td>Haematology</td><td>White Blood Cell</td><td>8.2 x10⁹/L</td><td>4.0–11.0</td><td class="status-ok">Normal</td></tr> <tr><td>Haematology</td><td>Platelet</td><td>218 x10⁹/L</td><td>150–400</td><td class="status-ok">Normal</td></tr> <tr><td>Liver</td><td>ALT</td><td>48 U/L</td><td>10–49</td><td class="status-ok">Normal</td></tr> <tr><td>Liver</td><td>AST</td><td>31 U/L</td><td>&lt;34</td><td class="status-ok">Normal</td></tr> <tr><td>Liver</td><td>GGT</td><td>51 U/L</td><td>&lt;73</td><td class="status-ok">Normal</td></tr> <tr><td>Liver</td><td>Bilirubin, Total</td><td>14.9 umol/L</td><td>&lt;22</td><td class="status-ok">Normal</td></tr> <tr><td>Liver</td><td>Fibrosis Score (FIB4)</td><td>0.76</td><td>&lt;1.30 = low risk</td><td class="status-ok">Low risk</td></tr> <tr><td>Renal</td><td>Creatinine</td><td>72 umol/L</td><td>65–104</td><td class="status-ok">Normal</td></tr> <tr><td>Renal</td><td>eGFR</td><td>&gt;90</td><td>&gt;90</td><td class="status-ok">Normal</td></tr> <tr><td>Renal</td><td>Uric Acid</td><td>0.47 mmol/L</td><td>0.22–0.55</td><td class="status-ok">Normal</td></tr> <tr><td>Renal</td><td>Glucose</td><td>4.8 mmol/L</td><td>3.9–6.0</td><td class="status-ok">Normal</td></tr> <tr><td>Lipids</td><td>Total Cholesterol</td><td>7.3 mmol/L</td><td>&lt;5.2</td><td class="status-bad">High</td></tr> <tr><td>Lipids</td><td>HDL</td><td>1.1 mmol/L</td><td>&gt;1.0</td><td class="status-ok">Borderline OK</td></tr> <tr><td>Lipids</td><td>Non-HDL</td><td>6.2 mmol/L</td><td>&lt;3.4</td><td class="status-bad">High</td></tr> <tr><td>Lipids</td><td>LDL</td><td>5.1 mmol/L</td><td>&lt;2.6</td><td class="status-bad">High</td></tr> <tr><td>Lipids</td><td>Triglycerides</td><td>2.5 mmol/L</td><td>&lt;1.7 fasting</td><td class="status-bad">High</td></tr> <tr><td>Lipids</td><td>Chol/HDL Ratio</td><td>6.6</td><td>&lt;3.5</td><td class="status-bad">High</td></tr> <tr><td>Urine FEME</td><td>Appearance</td><td>Turbid</td><td>Clear</td><td class="status-bad">Not normal</td></tr> <tr><td>Urine FEME</td><td>Specific Gravity</td><td>≥1.030</td><td>1.005–1.030</td><td class="status-bad">Concentrated</td></tr> <tr><td>Urine FEME</td><td>Protein / Glucose / Ketone</td><td>Negative</td><td>Negative</td><td class="status-ok">Normal</td></tr> <tr><td>Microscopy</td><td>RBC / WBC</td><td>Nil</td><td>&lt;4 / &lt;7</td><td class="status-ok">Normal</td></tr> <tr><td>Microscopy</td><td>Crystals</td><td>Ca Oxalate 1+, Urates 3+</td><td>None expected</td><td class="status-bad">Present</td></tr> </tbody> </table> <div class="labs-note">Requester: Dr Bernardine, M Clinic (Madang). This view is a compact summary for tracking purposes — always refer to the original e-report for clinical decisions.</div> </div> </section> <section class="page" id="page-steps"> <div class="section-title">Steps</div> <div class="section-sub">Haylou watch entry for the selected day.</div> <div class="strip" id="stepStrip"></div> <div class="section-card"> <div class="section-head" style="margin-bottom:12px;"> <span class="tag">👟 Daily Steps</span> <button class="btn btn-accent" id="saveSteps" type="button">Save</button> </div> <input id="stepCount" type="number" min="0" step="1" placeholder="0"> <div class="hint" id="todayStepsLabel">No steps logged</div> </div> </section> <section class="page" id="page-water"> <div class="section-title">Water</div> <div class="section-sub">Tap as you go — this feeds the Salt Wraith fight too.</div> <div class="strip" id="waterStrip"></div> <div class="section-card"> <div class="section-head" style="margin-bottom:12px; flex-wrap:wrap;"> <span class="tag">💧 Water</span> <div style="display:flex; gap:8px;"> <button class="btn mode-btn active" id="modeCups" type="button">Cup</button> <button class="btn mode-btn" id="modeBottle" type="button">1.5L</button> </div> </div> <div class="row-between"> <div><div style="font-size:26px; font-weight:700;" id="waterCount">0 / 8</div><div class="hint" id="waterLabel">cups</div></div> <button class="btn btn-accent" id="plusWater" type="button">+1</button> </div> <div class="water-grid" id="waterGrid"></div> </div> </section> <section class="page" id="page-quests"> <div class="section-title">Today's Quests</div> <div class="section-sub" id="questDateLabel">Check off what you actually did — half-credit days still count.</div> <div class="strip" id="questStrip"></div> <div id="questList"></div> <div class="bossblock"> <div class="section-title">This Week's Battle</div> <div class="section-sub">Every quest cleared this week chips away at these three. They reform fresh each Monday.</div> <div id="bossList"></div> </div> </section> <section class="page" id="page-journal"> <div class="section-title">Journal</div> <div class="section-sub" id="journalDateText"></div> <div class="strip" id="journalStrip"></div> <div class="section-card"> <div class="section-head" style="margin-bottom:12px;"> <span class="tag">📝 Daily Note</span> <button class="btn btn-accent" id="saveNote" type="button">Save</button> </div> <textarea id="dayNote" placeholder="How was the shift? How's the body feeling?"></textarea> </div> </section> </main> </div> <div class="toolbar"> <div class="tool-row"> <button class="btn" id="exportBtn" type="button">Export JSON</button> <button class="btn" id="importBtn" type="button">Import JSON</button> </div> </div> <input id="fileInput" type="file" accept="application/json,.json" hidden> <div class="toast" id="toast"></div> <script> (function(){ const STORAGE_KEY = 'joel-forgeborn-full-v1'; const pad = n => String(n).padStart(2,'0'); const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; const today = new Date(); const todayKey = fmt(today); let selectedDate = todayKey; const QUESTS = [ { id:'fuel', icon:'🍲', title:'Forge Fuel', desc:'Eat a real, home-style meal — protein and vegetables, easy on the fried oil.', xp:15, dmg:30, boss:'tallow' }, { id:'water', icon:'💧', title:'Steel Drink', desc:'Get to about 8 cups (2L) of water across the shift.', xp:15, dmg:40, boss:'salt' }, { id:'nosugar', icon:'🚫', title:'No Sweet Surrender', desc:'Skip the syrup drinks and sweet snacks today.', xp:10, dmg:20, boss:'tallow' }, { id:'walk', icon:'🥾', title:'Walk the Wall', desc:'15–20 minutes of easy walking, outside of the lifting work.', xp:10, dmg:20, boss:'tallow' }, { id:'cooldown', icon:'🌬️', title:'Cooldown Ritual', desc:'5 minutes to stretch and breathe once the shift ends.', xp:10, dmg:20, boss:'ember' }, { id:'rest', icon:'🌙', title:'Ironclad Rest', desc:'Lights out at a set time — aim for 7+ hours.', xp:15, dmg:30, boss:'ember' }, ]; const BOSSES = { tallow: { name:'The Tallow Golem', icon:'🗿', flavor:'Built from fried oil, sugar, and sluggish afternoons. Clean meals and movement chip its armor.', hp:450 }, salt: { name:'The Salt Wraith', icon:'🌊', flavor:'Feeds on long shifts without enough water. Drink it back into the shadows.', hp:260 }, ember: { name:'The Ember of Unrest', icon:'🔥', flavor:'Stress and short sleep keep it burning. Rest and breath smother the flame.', hp:320 }, }; const TIPS = [ "A warrior who skips water fights with a duller blade — drink before you feel thirsty, not after.", "Swap the fried plate for grilled or steamed once today. Small trade, real armor.", "Stretch the shoulders and lower back tonight — the forge takes its toll on the frame.", "Five slow breaths before bed quiets the Ember faster than scrolling ever will.", "A short walk after a heavy meal helps the body handle what it just took in.", "Sleep is where the Berserker actually gets stronger — the gym only starts the work.", "Trade the sweet drink for water once today. The Tallow Golem hates that trick.", "Overtime doesn't have to mean overeating — pack a real meal before the shift runs long.", "Salt and sugar both hit harder on a stressed, tired body. Rest is the counter-spell.", "A stiff, sore back after lifting is a signal, not a badge — stretch it out before it stacks up.", "Water first thing in the morning sets the pace for the whole day.", "Ten quiet minutes after work counts as real recovery, not laziness.", "The Golem grows fat on convenience food. Plan one home-cooked meal ahead of time.", "Consistency beats intensity — one clean choice today matters more than a perfect week you never started.", "Heavy hands sometimes need light meals — go easier on fried food after a long shift.", "A full water bottle nearby gets finished. An empty promise doesn't.", "Stress burns fast and hot — a short walk outside cools the Ember quicker than sitting still with it.", "The body remembers every rest day kindly. Don't skip it to prove something.", "Cholesterol and triglycerides respond slowly but surely — this is a long siege, not a single battle.", "The turbid, concentrated urine on the report is a hydration flag more than anything scary — Steel Drink is the direct answer to it.", "A level up doesn't need a perfect day behind it. It just needs today's quests logged, however small." ]; function baseState(){ return { xp:0, quests:{}, steps:{}, water:{}, notes:{} }; } function loadState(){ try{ const raw = localStorage.getItem(STORAGE_KEY); if(!raw) return baseState(); const p = JSON.parse(raw); return { xp: Number(p.xp)||0, quests: p.quests || {}, steps: p.steps || {}, water: p.water || {}, notes: p.notes || {} }; }catch(e){ return baseState(); } } const state = loadState(); function persist(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} } function ensureQuestDay(key){ if(!state.quests[key]) state.quests[key] = {}; } function ensureWaterDay(key){ if(!state.water[key]) state.water[key] = { mode:'cups', count:0, goal:8 }; } // ---- Nav ---- const pages = document.querySelectorAll('.page'); const navBtns = document.querySelectorAll('.navbtn'); function openPage(page){ pages.forEach(p=>p.classList.remove('active')); navBtns.forEach(b=>b.classList.remove('active')); document.getElementById(`page-${page}`).classList.add('active'); document.querySelector(`.navbtn[data-page="${page}"]`).classList.add('active'); window.scrollTo({top:0, behavior:'smooth'}); } navBtns.forEach(btn=>btn.addEventListener('click', ()=>openPage(btn.dataset.page))); // ---- Level / XP ---- function levelFromXp(xp){ return Math.floor(xp/100)+1; } function xpIntoLevel(xp){ return xp % 100; } function titleForLevel(lv){ if(lv>=10) return 'Ironheart Ascendant'; if(lv>=6) return 'Warlord of the Forge'; if(lv>=3) return 'Journeyman of the Anvil'; return 'Apprentice Forgeborn'; } function renderLevel(){ const lv = levelFromXp(state.xp); document.getElementById('lvNum').textContent = `Lv ${lv}`; document.getElementById('lvTitle').textContent = titleForLevel(lv); document.getElementById('xpNow').textContent = `${state.xp} XP`; const into = xpIntoLevel(state.xp); document.getElementById('xpNext').textContent = `${100-into} XP to next level`; document.getElementById('xpFill').style.width = `${into}%`; } // ---- Toast ---- let toastTimer = null; function showToast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(()=> t.classList.remove('show'), 2200); } // ---- Tip ---- function rollTip(){ document.getElementById('tipText').textContent = TIPS[Math.floor(Math.random()*TIPS.length)]; } document.getElementById('newTip').addEventListener('click', rollTip); // ---- Stats ---- function lifetimeCount(ids){ let c = 0; for(const key in state.quests){ const day = state.quests[key]; ids.forEach(id=>{ if(day[id]) c++; }); } return c; } function statLevel(count){ return Math.min(20, 1 + Math.floor(count/5)); } function renderStats(){ const strC = lifetimeCount(['fuel','walk']), vitC = lifetimeCount(['water']), resC = lifetimeCount(['cooldown','rest']); document.getElementById('strVal').textContent = statLevel(strC); document.getElementById('vitVal').textContent = statLevel(vitC); document.getElementById('resVal').textContent = statLevel(resC); document.getElementById('strBar').style.width = `${(strC%5)/5*100}%`; document.getElementById('vitBar').style.width = `${(vitC%5)/5*100}%`; document.getElementById('resBar').style.width = `${(resC%5)/5*100}%`; } // ---- Streak ---- function currentStreak(){ let streak = 0; let cursor = new Date(today); while(true){ const key = fmt(cursor); const day = state.quests[key]; const any = day && Object.values(day).some(Boolean); if(any){ streak++; cursor.setDate(cursor.getDate()-1); } else break; } return streak; } function renderStreak(){ document.getElementById('streakNum').textContent = currentStreak(); } // ---- Shared day strips (one per page that needs a date) ---- const stripIds = ['stepStrip','waterStrip','questStrip','journalStrip']; function renderStrips(){ stripIds.forEach(id=>{ const strip = document.getElementById(id); if(!strip) return; strip.innerHTML = ''; for(let i=6;i>=0;i--){ const d = new Date(today); d.setDate(today.getDate()-i); const key = fmt(d); const day = state.quests[key]; const doneCount = day ? Object.values(day).filter(Boolean).length : 0; const el = document.createElement('button'); el.type = 'button'; el.className = 'spill' + (key===todayKey?' today':'') + (key===selectedDate?' sel':''); el.innerHTML = `<div class="d">${d.toLocaleString('en-US',{weekday:'short'})}</div><div class="n">${d.getDate()}</div><div class="flame">${doneCount>0?'🔥'.repeat(Math.min(3,Math.ceil(doneCount/2))):'·'}</div>`; el.addEventListener('click', ()=>{ selectedDate = key; renderAll(); }); strip.appendChild(el); } }); } // ---- Steps ---- function renderSteps(){ const key = selectedDate; document.getElementById('stepCount').value = state.steps[key] || ''; document.getElementById('todayStepsLabel').textContent = state.steps[key] ? `${state.steps[key]} steps logged for ${key}` : `No steps logged for ${key}`; } document.getElementById('saveSteps').addEventListener('click', ()=>{ state.steps[selectedDate] = Number(document.getElementById('stepCount').value) || 0; persist(); renderSteps(); showToast('Steps saved'); }); // ---- Water ---- const modeCups = document.getElementById('modeCups'); const modeBottle = document.getElementById('modeBottle'); function renderWater(){ ensureWaterDay(selectedDate); const day = state.water[selectedDate]; modeCups.classList.toggle('active', day.mode==='cups'); modeBottle.classList.toggle('active', day.mode==='bottle'); document.getElementById('waterCount').textContent = `${day.count} / ${day.goal}`; document.getElementById('waterLabel').textContent = day.mode==='cups' ? 'cups' : 'bottles'; const grid = document.getElementById('waterGrid'); grid.innerHTML = ''; for(let i=1;i<=day.goal;i++){ const btn = document.createElement('button'); btn.type='button'; if(i<=day.count) btn.classList.add('active'); btn.textContent = i; btn.addEventListener('click', ()=>{ day.count = i<=day.count ? i-1 : i; persist(); renderWater(); }); grid.appendChild(btn); } } function setMode(mode){ const day = state.water[selectedDate]; day.mode = mode; day.goal = mode==='cups' ? 8 : 4; if(day.count > day.goal) day.count = day.goal; persist(); renderWater(); } modeCups.addEventListener('click', ()=>setMode('cups')); modeBottle.addEventListener('click', ()=>setMode('bottle')); document.getElementById('plusWater').addEventListener('click', ()=>{ const day = state.water[selectedDate]; if(day.count < day.goal) day.count += 1; persist(); renderWater(); }); // ---- Quests ---- function renderQuests(){ ensureQuestDay(selectedDate); const day = state.quests[selectedDate]; document.getElementById('questDateLabel').textContent = selectedDate===todayKey ? "Check off what you actually did — half-credit days still count." : `Logging for ${selectedDate}.`; const list = document.getElementById('questList'); list.innerHTML = ''; QUESTS.forEach(q=>{ const done = !!day[q.id]; const card = document.createElement('div'); card.className = 'quest' + (done ? ' done' : ''); card.innerHTML = ` <div class="qcheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"></path></svg></div> <div class="qbody"> <div class="qtitle"><span>${q.icon}</span>${q.title}</div> <div class="qdesc">${q.desc}</div> <div class="qmeta"><span class="qxp">+${q.xp} XP</span><span class="qboss">${BOSSES[q.boss].icon} ${BOSSES[q.boss].name.replace('The ','')}</span></div> </div>`; card.addEventListener('click', ()=> toggleQuest(q)); list.appendChild(card); }); } function toggleQuest(q){ ensureQuestDay(selectedDate); const day = state.quests[selectedDate]; const wasDone = !!day[q.id]; const prevLevel = levelFromXp(state.xp); if(wasDone){ day[q.id] = false; state.xp = Math.max(0, state.xp - q.xp); } else { day[q.id] = true; state.xp += q.xp; } persist(); const newLevel = levelFromXp(state.xp); if(newLevel > prevLevel) showToast(`⚔️ Level up! Now Lv ${newLevel} — ${titleForLevel(newLevel)}`); else if(!wasDone) showToast(`+${q.xp} XP · ${q.title} logged`); renderAll(); } function currentWeekDates(){ const dow = (today.getDay()+6)%7; const monday = new Date(today); monday.setDate(today.getDate()-dow); const days = []; for(let i=0;i<7;i++){ const d = new Date(monday); d.setDate(monday.getDate()+i); if(d<=today) days.push(fmt(d)); } return days; } function isoWeekLabel(d){ const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = (date.getUTCDay()+6)%7; date.setUTCDate(date.getUTCDate()-day+3); const firstThursday = new Date(Date.UTC(date.getUTCFullYear(),0,4)); const week = 1 + Math.round(((date - firstThursday)/86400000 - 3 + ((firstThursday.getUTCDay()+6)%7))/7); return `${date.getUTCFullYear()}-W${pad(week)}`; } function bossDamage(bossId){ let dmg = 0; currentWeekDates().forEach(key=>{ const day = state.quests[key]; if(!day) return; QUESTS.filter(q=>q.boss===bossId).forEach(q=>{ if(day[q.id]) dmg += q.dmg; }); }); return dmg; } function renderBosses(){ const list = document.getElementById('bossList'); list.innerHTML = ''; Object.keys(BOSSES).forEach(id=>{ const boss = BOSSES[id]; const dmg = bossDamage(id); const hpLeft = Math.max(0, boss.hp - dmg); const pct = Math.max(0, Math.min(100, (hpLeft/boss.hp)*100)); const defeated = hpLeft<=0; const card = document.createElement('div'); card.className = 'boss' + (defeated ? ' defeated' : ''); card.innerHTML = ` <div class="bosshead"> <div class="bossicon">${boss.icon}</div> <div><div class="bossname">${boss.name}</div><div class="bosssub">${defeated?'Slain this week':'Active this week'}</div></div> </div> <div class="bossflavor">${boss.flavor}</div> <div class="hpbar"><div class="hpfill" style="width:${pct}%"></div></div> <div class="hprow"><span>${defeated?'<span class="defeatedtag">Defeated 🏆</span>':`${hpLeft} / ${boss.hp} HP`}</span><span>${isoWeekLabel(today)}</span></div> `; list.appendChild(card); }); } // ---- Journal ---- function renderJournal(){ document.getElementById('journalDateText').textContent = `Note for ${selectedDate}`; document.getElementById('dayNote').value = state.notes[selectedDate] || ''; } document.getElementById('saveNote').addEventListener('click', ()=>{ state.notes[selectedDate] = document.getElementById('dayNote').value; persist(); showToast('Note saved'); }); // ---- Export / Import ---- document.getElementById('exportBtn').addEventListener('click', ()=>{ const payload = { exportedAt:new Date().toISOString(), tracker:"Joel's Forgeborn Quest", data:state }; const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `joel-forgeborn-${todayKey}.json`; a.click(); URL.revokeObjectURL(url); }); const fileInput = document.getElementById('fileInput'); document.getElementById('importBtn').addEventListener('click', ()=> fileInput.click()); fileInput.addEventListener('change', async (e)=>{ const file = e.target.files && e.target.files[0]; if(!file) return; try{ const parsed = JSON.parse(await file.text()); const incoming = parsed.data || parsed; state.xp = Number(incoming.xp)||0; state.quests = incoming.quests || {}; state.steps = incoming.steps || {}; state.water = incoming.water || {}; state.notes = incoming.notes || {}; persist(); renderAll(); showToast('Save imported'); }catch(err){ showToast('Import failed'); } fileInput.value = ''; }); function renderAll(){ renderLevel(); renderStats(); renderStreak(); renderStrips(); renderSteps(); renderWater(); renderQuests(); renderBosses(); renderJournal(); } rollTip(); renderAll(); })(); </script> </body> </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Forgeborn · Joel's Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#161210; --surface:#211a15; --surface-2:#2a211a; --surface-3:#332820;
+    --border:rgba(255,255,255,0.10); --text:#f3e9d8; --muted:#b4a48b; --faint:#7c6f5c;
+    --ember:#e8692c; --ember-deep:#b8481c; --ember-soft:rgba(232,105,44,0.16);
+    --gold:#d9b23c; --steel:#7fa2c4; --steel-soft:rgba(127,162,196,.16); --crimson:#c1443c; --ok:#8fb45f;
+    --radius:18px; --radius-sm:12px; --shadow:0 14px 30px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{min-height:100%;background:radial-gradient(1200px 600px at 50% -10%, rgba(232,105,44,0.10), transparent 60%), var(--bg);}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--text);}
+  button,input,textarea{font:inherit;color:inherit;}
+  button{cursor:pointer;background:none;border:none;}
+  input,textarea{width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:.75rem .9rem;}
+  textarea{min-height:130px;resize:vertical;}
+  .app{max-width:460px;margin:0 auto;min-height:100dvh;padding-bottom:90px;}
+  .topbar{position:sticky;top:0;z-index:10;background:rgba(22,18,16,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);padding:14px 14px 10px;}
+  .brandrow{display:flex;align-items:center;gap:12px;}
+  .crest{width:42px;height:42px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;background:linear-gradient(155deg, var(--ember) 0%, var(--ember-deep) 100%);box-shadow:0 6px 16px rgba(232,105,44,.35);}
+  .crest svg{width:21px;height:21px;color:#1a1310;}
+  .brand h1{font-family:'Cinzel',serif;font-size:1.2rem;letter-spacing:.02em;line-height:1.1;}
+  .brand p{color:var(--muted);font-size:11px;margin-top:2px;letter-spacing:.03em;text-transform:uppercase;}
+  .lvlbadge{margin-left:auto;text-align:right;flex:0 0 auto;}
+  .lvlbadge .lv{font-family:'Cinzel',serif;font-size:1.35rem;color:var(--gold);line-height:1;}
+  .lvlbadge .ttl{font-size:10px;color:var(--muted);margin-top:2px;max-width:110px;}
+  .xpwrap{margin-top:10px;}
+  .xprow{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-bottom:5px;}
+  .xpbar{height:8px;border-radius:6px;background:var(--surface-2);overflow:hidden;border:1px solid var(--border);}
+  .xpfill{height:100%;background:linear-gradient(90deg, var(--gold), var(--ember));border-radius:6px;transition:width .5s ease;}
+  .streakrow{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11.5px;color:var(--muted);}
+  .streakrow b{color:var(--ember);font-family:'Cinzel',serif;}
+  .topnav{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px;}
+  .navbtn{min-height:48px;border-radius:12px;background:var(--surface);border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:9.5px;}
+  .navbtn.active{background:var(--ember);color:#1a1310;}
+  .navbtn svg{width:15px;height:15px;}
+  .content{padding:14px 14px 6px;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .section-title{font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.02em;margin-bottom:2px;}
+  .section-sub{color:var(--muted);font-size:12.5px;margin-bottom:12px;line-height:1.4;}
+  .tipcard{background:linear-gradient(155deg, var(--surface-2), var(--surface));border:1px solid rgba(232,105,44,.22);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+  .tipcard::before{content:"";position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle, rgba(232,105,44,.18), transparent 70%);}
+  .tiplabel{display:flex;align-items:center;gap:6px;color:var(--ember);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;font-weight:600;}
+  .tiptext{font-size:14px;line-height:1.5;position:relative;}
+  .tiprefresh{margin-top:10px;font-size:11px;color:var(--faint);}
+  .tiprefresh button{color:var(--ember);text-decoration:underline;text-underline-offset:2px;}
+  .statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px;}
+  .statcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;}
+  .statcard .icon{font-size:16px;margin-bottom:4px;}
+  .statcard .sname{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .statcard .sval{font-family:'Cinzel',serif;font-size:1.25rem;margin-top:2px;}
+  .statcard .sbar{height:4px;border-radius:3px;background:var(--surface-2);margin-top:6px;overflow:hidden;}
+  .statcard .sbar span{display:block;height:100%;background:var(--steel);}
+  .statcard.str .sbar span{background:var(--ember);}
+  .statcard.res .sbar span{background:var(--gold);}
+  .strip{display:flex;gap:7px;overflow:auto;padding-bottom:2px;margin-bottom:14px;}
+  .spill{min-width:44px;padding:8px 6px;border-radius:12px;background:var(--surface);border:1px solid var(--border);text-align:center;color:var(--muted);flex:0 0 auto;}
+  .spill.today{border-color:var(--ember);}
+  .spill.sel{background:var(--ember);color:#1a1310;}
+  .spill .d{font-size:10px;}
+  .spill .n{font-size:14px;font-weight:700;margin-top:2px;}
+  .spill .flame{font-size:10px;margin-top:3px;}
+  .section-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);margin-bottom:14px;}
+  .section-head,.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .tag{display:inline-flex;align-items:center;gap:8px;min-height:36px;border-radius:12px;padding:0 12px;border:1px solid var(--border);font-size:13.5px;}
+  .btn{min-height:38px;border-radius:12px;padding:0 14px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:13px;font-weight:500;}
+  .btn-accent{background:var(--ember);color:#1a1310;border-color:transparent;font-weight:600;}
+  .hint{color:var(--muted);font-size:12.5px;margin-top:8px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .mini{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:12px;}
+  .mini .label{color:var(--muted);font-size:11px;margin-bottom:5px;}
+  .mini .value{font-size:20px;font-weight:700;font-family:'Cinzel',serif;}
+  .mini .sub{margin-top:5px;font-size:11px;color:var(--faint);}
+  .status-ok{color:var(--ok);}
+  .status-bad{color:var(--crimson);}
+  .water-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;}
+  .water-grid button{min-height:46px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--muted);}
+  .water-grid button.active{background:var(--steel);color:#1a1310;border-color:transparent;}
+  .mode-btn.active{background:var(--steel);color:#1a1310;border-color:transparent;}
+  .labs-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .labs-table th,.labs-table td{text-align:left;vertical-align:top;padding:9px 6px;border-bottom:1px solid var(--border);}
+  .labs-table th{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em;}
+  .labs-wrap{overflow:auto;}
+  .labs-note{color:var(--faint);font-size:11px;margin-top:10px;line-height:1.4;}
+  .quest{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:13px 14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;transition:border-color .2s, background .2s;}
+  .quest.done{background:var(--ember-soft);border-color:rgba(232,105,44,.35);}
+  .qcheck{width:26px;height:26px;border-radius:8px;border:2px solid var(--faint);flex:0 0 auto;margin-top:2px;display:grid;place-items:center;transition:all .15s;}
+  .quest.done .qcheck{background:var(--ember);border-color:var(--ember);}
+  .qcheck svg{width:15px;height:15px;color:#1a1310;opacity:0;transition:opacity .15s;}
+  .quest.done .qcheck svg{opacity:1;}
+  .qbody{flex:1;}
+  .qtitle{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:7px;}
+  .qdesc{color:var(--muted);font-size:12.5px;line-height:1.4;margin-top:3px;}
+  .qmeta{display:flex;gap:8px;margin-top:7px;flex-wrap:wrap;}
+  .qxp{font-size:10.5px;color:var(--gold);background:rgba(217,178,60,.12);border:1px solid rgba(217,178,60,.25);border-radius:8px;padding:2px 7px;}
+  .qboss{font-size:10.5px;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:2px 7px;}
+  .bossblock{margin-top:20px;}
+  .boss{background:linear-gradient(155deg, var(--surface-2), var(--surface));border:1px solid var(--border);border-radius:var(--radius);padding:14px 15px;margin-bottom:11px;box-shadow:var(--shadow);}
+  .boss.defeated{opacity:.55;}
+  .bosshead{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .bossicon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex:0 0 auto;background:var(--surface-3);}
+  .bossname{font-family:'Cinzel',serif;font-size:13px;}
+  .bosssub{color:var(--faint);font-size:10px;margin-top:1px;}
+  .bossflavor{color:var(--muted);font-size:11.5px;line-height:1.4;margin-bottom:9px;}
+  .hpbar{height:11px;border-radius:6px;background:var(--surface-3);overflow:hidden;border:1px solid var(--border);}
+  .hpfill{height:100%;background:linear-gradient(90deg, var(--crimson), #e08a3f);border-radius:6px;transition:width .5s ease;}
+  .hprow{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:5px;}
+  .defeatedtag{color:var(--ok);font-weight:600;}
+  .toolbar{position:fixed;left:0;right:0;bottom:0;background:rgba(22,18,16,.96);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.06);padding:10px 14px max(10px, env(safe-area-inset-bottom));}
+  .tool-row{max-width:460px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .toast{position:fixed;left:50%;top:16px;transform:translate(-50%,-140%);z-index:50;background:linear-gradient(155deg, var(--ember), var(--ember-deep));color:#1a1310;padding:12px 20px;border-radius:14px;font-family:'Cinzel',serif;font-size:13px;font-weight:700;box-shadow:0 10px 26px rgba(232,105,44,.45);transition:transform .4s cubic-bezier(.2,1.4,.4,1);text-align:center;white-space:nowrap;}
+  .toast.show{transform:translate(-50%,0);}
+  @media (min-width:700px){
+    .app{max-width:760px;}
+    .content{padding:18px 20px;}
+    .grid2{grid-template-columns:repeat(4,1fr);}
+    .topnav{grid-template-columns:repeat(6,90px);justify-content:start;}
+    .tool-row{max-width:760px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brandrow">
+      <div class="crest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 3.5 21 10l-2 2-1.5-1.5L9 19l-4 1 1-4 8.5-8.5L13 6l1.5-2.5Z"></path><path d="M3 21l4-1"></path></svg></div>
+      <div><h1>Forgeborn</h1><p>Joel's Quest</p></div>
+      <div class="lvlbadge"><div class="lv" id="lvNum">Lv 1</div><div class="ttl" id="lvTitle">Apprentice</div></div>
+    </div>
+    <div class="xpwrap">
+      <div class="xprow"><span id="xpNow">0 XP</span><span id="xpNext">100 XP to next level</span></div>
+      <div class="xpbar"><div class="xpfill" id="xpFill" style="width:0%"></div></div>
+    </div>
+    <div class="streakrow"><span>🔥</span><span>Streak: <b id="streakNum">0</b> day(s)</span></div>
+    <nav class="topnav" aria-label="Tracker pages">
+      <button class="navbtn active" data-page="summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"></path></svg><span>Summary</span></button>
+      <button class="navbtn" data-page="labs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6M10 9V3h4v6l5 8a3 3 0 0 1-2.57 4.5H7.57A3 3 0 0 1 5 17l5-8Z"></path></svg><span>Labs</span></button>
+      <button class="navbtn" data-page="steps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17c1.5 0 2-1 2-2.5S8 12 6.5 12 4 13 4 14.5 5.5 17 7 17Zm10-5c1.5 0 2-1 2-2.5S18 7 16.5 7 14 8 14 9.5 15.5 12 17 12Zm-6 8c1.5 0 2-1 2-2.5S12 15 10.5 15 8 16 8 17.5 9.5 20 11 20Z"></path></svg><span>Steps</span></button>
+      <button class="navbtn" data-page="water"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11Z"></path></svg><span>Water</span></button>
+      <button class="navbtn" data-page="quests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.5 3.5 21 10l-2 2-1.5-1.5L9 19l-4 1 1-4 8.5-8.5L13 6l1.5-2.5Z"></path></svg><span>Quests</span></button>
+      <button class="navbtn" data-page="journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path></svg><span>Journal</span></button>
+    </nav>
+  </header>
+
+  <main class="content">
+
+    <section class="page active" id="page-summary">
+      <div class="tipcard">
+        <div class="tiplabel">📜 Whisper of the Day</div>
+        <div class="tiptext" id="tipText">Loading...</div>
+        <div class="tiprefresh"><button id="newTip" type="button">another one</button></div>
+      </div>
+      <div class="statgrid">
+        <div class="statcard str"><div class="icon">💪</div><div class="sname">Strength</div><div class="sval" id="strVal">1</div><div class="sbar"><span id="strBar" style="width:0%"></span></div></div>
+        <div class="statcard vit"><div class="icon">💧</div><div class="sname">Vitality</div><div class="sval" id="vitVal">1</div><div class="sbar"><span id="vitBar" style="width:0%"></span></div></div>
+        <div class="statcard res"><div class="icon">🕯️</div><div class="sname">Resolve</div><div class="sval" id="resVal">1</div><div class="sbar"><span id="resBar" style="width:0%"></span></div></div>
+      </div>
+      <div class="section-title">Watching Closely</div>
+      <div class="section-sub">From the 14.07.2026 Premier Integrated Labs report.</div>
+      <div class="grid2">
+        <div class="mini"><div class="label">Total Cholesterol</div><div class="value">7.3</div><div class="sub status-bad">High · &lt;5.2 mmol/L</div></div>
+        <div class="mini"><div class="label">LDL</div><div class="value">5.1</div><div class="sub status-bad">High · &lt;2.6 mmol/L</div></div>
+        <div class="mini"><div class="label">Triglycerides</div><div class="value">2.5</div><div class="sub status-bad">High · &lt;1.7 mmol/L</div></div>
+        <div class="mini"><div class="label">Chol/HDL Ratio</div><div class="value">6.6</div><div class="sub status-bad">High · &lt;3.5</div></div>
+        <div class="mini"><div class="label">Urine Sp. Gravity</div><div class="value">≥1.030</div><div class="sub status-bad">Concentrated · 1.005–1.030</div></div>
+        <div class="mini"><div class="label">eGFR</div><div class="value">&gt;90</div><div class="sub status-ok">Normal · &gt;90</div></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-labs">
+      <div class="section-title">Full Report</div>
+      <div class="section-sub">Premier Integrated Labs · Collected 11.07.2026 · Reported 14.07.2026</div>
+      <div class="section-card labs-wrap">
+        <table class="labs-table">
+          <thead><tr><th>Section</th><th>Test</th><th>Result</th><th>Range</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Haematology</td><td>Haemoglobin</td><td>156 g/L</td><td>130–180</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Haematology</td><td>White Blood Cell</td><td>8.2 x10⁹/L</td><td>4.0–11.0</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Haematology</td><td>Platelet</td><td>218 x10⁹/L</td><td>150–400</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Liver</td><td>ALT</td><td>48 U/L</td><td>10–49</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Liver</td><td>AST</td><td>31 U/L</td><td>&lt;34</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Liver</td><td>GGT</td><td>51 U/L</td><td>&lt;73</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Liver</td><td>Bilirubin, Total</td><td>14.9 umol/L</td><td>&lt;22</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Liver</td><td>Fibrosis Score (FIB4)</td><td>0.76</td><td>&lt;1.30 = low risk</td><td class="status-ok">Low risk</td></tr>
+            <tr><td>Renal</td><td>Creatinine</td><td>72 umol/L</td><td>65–104</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Renal</td><td>eGFR</td><td>&gt;90</td><td>&gt;90</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Renal</td><td>Uric Acid</td><td>0.47 mmol/L</td><td>0.22–0.55</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Renal</td><td>Glucose</td><td>4.8 mmol/L</td><td>3.9–6.0</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Lipids</td><td>Total Cholesterol</td><td>7.3 mmol/L</td><td>&lt;5.2</td><td class="status-bad">High</td></tr>
+            <tr><td>Lipids</td><td>HDL</td><td>1.1 mmol/L</td><td>&gt;1.0</td><td class="status-ok">Borderline OK</td></tr>
+            <tr><td>Lipids</td><td>Non-HDL</td><td>6.2 mmol/L</td><td>&lt;3.4</td><td class="status-bad">High</td></tr>
+            <tr><td>Lipids</td><td>LDL</td><td>5.1 mmol/L</td><td>&lt;2.6</td><td class="status-bad">High</td></tr>
+            <tr><td>Lipids</td><td>Triglycerides</td><td>2.5 mmol/L</td><td>&lt;1.7 fasting</td><td class="status-bad">High</td></tr>
+            <tr><td>Lipids</td><td>Chol/HDL Ratio</td><td>6.6</td><td>&lt;3.5</td><td class="status-bad">High</td></tr>
+            <tr><td>Urine FEME</td><td>Appearance</td><td>Turbid</td><td>Clear</td><td class="status-bad">Not normal</td></tr>
+            <tr><td>Urine FEME</td><td>Specific Gravity</td><td>≥1.030</td><td>1.005–1.030</td><td class="status-bad">Concentrated</td></tr>
+            <tr><td>Urine FEME</td><td>Protein / Glucose / Ketone</td><td>Negative</td><td>Negative</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Microscopy</td><td>RBC / WBC</td><td>Nil</td><td>&lt;4 / &lt;7</td><td class="status-ok">Normal</td></tr>
+            <tr><td>Microscopy</td><td>Crystals</td><td>Ca Oxalate 1+, Urates 3+</td><td>None expected</td><td class="status-bad">Present</td></tr>
+          </tbody>
+        </table>
+        <div class="labs-note">Requester: Dr Bernardine, M Clinic (Madang). This view is a compact summary for tracking purposes — always refer to the original e-report for clinical decisions.</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-steps">
+      <div class="section-title">Steps</div>
+      <div class="section-sub">Haylou watch entry for the selected day.</div>
+      <div class="strip" id="stepStrip"></div>
+      <div class="section-card">
+        <div class="section-head" style="margin-bottom:12px;">
+          <span class="tag">👟 Daily Steps</span>
+          <button class="btn btn-accent" id="saveSteps" type="button">Save</button>
+        </div>
+        <input id="stepCount" type="number" min="0" step="1" placeholder="0">
+        <div class="hint" id="todayStepsLabel">No steps logged</div>
+      </div>
+    </section>
+
+    <section class="page" id="page-water">
+      <div class="section-title">Water</div>
+      <div class="section-sub">Tap as you go — this feeds the Salt Wraith fight too.</div>
+      <div class="strip" id="waterStrip"></div>
+      <div class="section-card">
+        <div class="section-head" style="margin-bottom:12px; flex-wrap:wrap;">
+          <span class="tag">💧 Water</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn mode-btn active" id="modeCups" type="button">Cup</button>
+            <button class="btn mode-btn" id="modeBottle" type="button">1.5L</button>
+          </div>
+        </div>
+        <div class="row-between">
+          <div><div style="font-size:26px; font-weight:700;" id="waterCount">0 / 8</div><div class="hint" id="waterLabel">cups</div></div>
+          <button class="btn btn-accent" id="plusWater" type="button">+1</button>
+        </div>
+        <div class="water-grid" id="waterGrid"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-quests">
+      <div class="section-title">Today's Quests</div>
+      <div class="section-sub" id="questDateLabel">Check off what you actually did — half-credit days still count.</div>
+      <div class="strip" id="questStrip"></div>
+      <div id="questList"></div>
+      <div class="bossblock">
+        <div class="section-title">This Week's Battle</div>
+        <div class="section-sub">Every quest cleared this week chips away at these three. They reform fresh each Monday.</div>
+        <div id="bossList"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-journal">
+      <div class="section-title">Journal</div>
+      <div class="section-sub" id="journalDateText"></div>
+      <div class="strip" id="journalStrip"></div>
+      <div class="section-card">
+        <div class="section-head" style="margin-bottom:12px;">
+          <span class="tag">📝 Daily Note</span>
+          <button class="btn btn-accent" id="saveNote" type="button">Save</button>
+        </div>
+        <textarea id="dayNote" placeholder="How was the shift? How's the body feeling?"></textarea>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toolbar">
+  <div class="tool-row">
+    <button class="btn" id="exportBtn" type="button">Export JSON</button>
+    <button class="btn" id="importBtn" type="button">Import JSON</button>
+  </div>
+</div>
+<input id="fileInput" type="file" accept="application/json,.json" hidden>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'joel-forgeborn-full-v1';
+  const pad = n => String(n).padStart(2,'0');
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const today = new Date();
+  const todayKey = fmt(today);
+  let selectedDate = todayKey;
+
+  const QUESTS = [
+    { id:'fuel', icon:'🍲', title:'Forge Fuel', desc:'Eat a real, home-style meal — protein and vegetables, easy on the fried oil.', xp:15, dmg:30, boss:'tallow' },
+    { id:'water', icon:'💧', title:'Steel Drink', desc:'Get to about 8 cups (2L) of water across the shift.', xp:15, dmg:40, boss:'salt' },
+    { id:'nosugar', icon:'🚫', title:'No Sweet Surrender', desc:'Skip the syrup drinks and sweet snacks today.', xp:10, dmg:20, boss:'tallow' },
+    { id:'walk', icon:'🥾', title:'Walk the Wall', desc:'15–20 minutes of easy walking, outside of the lifting work.', xp:10, dmg:20, boss:'tallow' },
+    { id:'cooldown', icon:'🌬️', title:'Cooldown Ritual', desc:'5 minutes to stretch and breathe once the shift ends.', xp:10, dmg:20, boss:'ember' },
+    { id:'rest', icon:'🌙', title:'Ironclad Rest', desc:'Lights out at a set time — aim for 7+ hours.', xp:15, dmg:30, boss:'ember' },
+  ];
+  const BOSSES = {
+    tallow: { name:'The Tallow Golem', icon:'🗿', flavor:'Built from fried oil, sugar, and sluggish afternoons. Clean meals and movement chip its armor.', hp:450 },
+    salt:   { name:'The Salt Wraith', icon:'🌊', flavor:'Feeds on long shifts without enough water. Drink it back into the shadows.', hp:260 },
+    ember:  { name:'The Ember of Unrest', icon:'🔥', flavor:'Stress and short sleep keep it burning. Rest and breath smother the flame.', hp:320 },
+  };
+  const TIPS = [
+    "A warrior who skips water fights with a duller blade — drink before you feel thirsty, not after.",
+    "Swap the fried plate for grilled or steamed once today. Small trade, real armor.",
+    "Stretch the shoulders and lower back tonight — the forge takes its toll on the frame.",
+    "Five slow breaths before bed quiets the Ember faster than scrolling ever will.",
+    "A short walk after a heavy meal helps the body handle what it just took in.",
+    "Sleep is where the Berserker actually gets stronger — the gym only starts the work.",
+    "Trade the sweet drink for water once today. The Tallow Golem hates that trick.",
+    "Overtime doesn't have to mean overeating — pack a real meal before the shift runs long.",
+    "Salt and sugar both hit harder on a stressed, tired body. Rest is the counter-spell.",
+    "A stiff, sore back after lifting is a signal, not a badge — stretch it out before it stacks up.",
+    "Water first thing in the morning sets the pace for the whole day.",
+    "Ten quiet minutes after work counts as real recovery, not laziness.",
+    "The Golem grows fat on convenience food. Plan one home-cooked meal ahead of time.",
+    "Consistency beats intensity — one clean choice today matters more than a perfect week you never started.",
+    "Heavy hands sometimes need light meals — go easier on fried food after a long shift.",
+    "A full water bottle nearby gets finished. An empty promise doesn't.",
+    "Stress burns fast and hot — a short walk outside cools the Ember quicker than sitting still with it.",
+    "The body remembers every rest day kindly. Don't skip it to prove something.",
+    "Cholesterol and triglycerides respond slowly but surely — this is a long siege, not a single battle.",
+    "The turbid, concentrated urine on the report is a hydration flag more than anything scary — Steel Drink is the direct answer to it.",
+    "A level up doesn't need a perfect day behind it. It just needs today's quests logged, however small."
+  ];
+
+  function baseState(){ return { xp:0, quests:{}, steps:{}, water:{}, notes:{} }; }
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return baseState();
+      const p = JSON.parse(raw);
+      return {
+        xp: Number(p.xp)||0,
+        quests: p.quests || {},
+        steps: p.steps || {},
+        water: p.water || {},
+        notes: p.notes || {}
+      };
+    }catch(e){ return baseState(); }
+  }
+  const state = loadState();
+  function persist(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
+  function ensureQuestDay(key){ if(!state.quests[key]) state.quests[key] = {}; }
+  function ensureWaterDay(key){ if(!state.water[key]) state.water[key] = { mode:'cups', count:0, goal:8 }; }
+
+  // ---- Nav ----
+  const pages = document.querySelectorAll('.page');
+  const navBtns = document.querySelectorAll('.navbtn');
+  function openPage(page){
+    pages.forEach(p=>p.classList.remove('active'));
+    navBtns.forEach(b=>b.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.add('active');
+    document.querySelector(`.navbtn[data-page="${page}"]`).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  navBtns.forEach(btn=>btn.addEventListener('click', ()=>openPage(btn.dataset.page)));
+
+  // ---- Level / XP ----
+  function levelFromXp(xp){ return Math.floor(xp/100)+1; }
+  function xpIntoLevel(xp){ return xp % 100; }
+  function titleForLevel(lv){
+    if(lv>=10) return 'Ironheart Ascendant';
+    if(lv>=6) return 'Warlord of the Forge';
+    if(lv>=3) return 'Journeyman of the Anvil';
+    return 'Apprentice Forgeborn';
+  }
+  function renderLevel(){
+    const lv = levelFromXp(state.xp);
+    document.getElementById('lvNum').textContent = `Lv ${lv}`;
+    document.getElementById('lvTitle').textContent = titleForLevel(lv);
+    document.getElementById('xpNow').textContent = `${state.xp} XP`;
+    const into = xpIntoLevel(state.xp);
+    document.getElementById('xpNext').textContent = `${100-into} XP to next level`;
+    document.getElementById('xpFill').style.width = `${into}%`;
+  }
+
+  // ---- Toast ----
+  let toastTimer = null;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> t.classList.remove('show'), 2200);
+  }
+
+  // ---- Tip ----
+  function rollTip(){ document.getElementById('tipText').textContent = TIPS[Math.floor(Math.random()*TIPS.length)]; }
+  document.getElementById('newTip').addEventListener('click', rollTip);
+
+  // ---- Stats ----
+  function lifetimeCount(ids){
+    let c = 0;
+    for(const key in state.quests){ const day = state.quests[key]; ids.forEach(id=>{ if(day[id]) c++; }); }
+    return c;
+  }
+  function statLevel(count){ return Math.min(20, 1 + Math.floor(count/5)); }
+  function renderStats(){
+    const strC = lifetimeCount(['fuel','walk']), vitC = lifetimeCount(['water']), resC = lifetimeCount(['cooldown','rest']);
+    document.getElementById('strVal').textContent = statLevel(strC);
+    document.getElementById('vitVal').textContent = statLevel(vitC);
+    document.getElementById('resVal').textContent = statLevel(resC);
+    document.getElementById('strBar').style.width = `${(strC%5)/5*100}%`;
+    document.getElementById('vitBar').style.width = `${(vitC%5)/5*100}%`;
+    document.getElementById('resBar').style.width = `${(resC%5)/5*100}%`;
+  }
+
+  // ---- Streak ----
+  function currentStreak(){
+    let streak = 0; let cursor = new Date(today);
+    while(true){
+      const key = fmt(cursor);
+      const day = state.quests[key];
+      const any = day && Object.values(day).some(Boolean);
+      if(any){ streak++; cursor.setDate(cursor.getDate()-1); } else break;
+    }
+    return streak;
+  }
+  function renderStreak(){ document.getElementById('streakNum').textContent = currentStreak(); }
+
+  // ---- Shared day strips (one per page that needs a date) ----
+  const stripIds = ['stepStrip','waterStrip','questStrip','journalStrip'];
+  function renderStrips(){
+    stripIds.forEach(id=>{
+      const strip = document.getElementById(id);
+      if(!strip) return;
+      strip.innerHTML = '';
+      for(let i=6;i>=0;i--){
+        const d = new Date(today); d.setDate(today.getDate()-i);
+        const key = fmt(d);
+        const day = state.quests[key];
+        const doneCount = day ? Object.values(day).filter(Boolean).length : 0;
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.className = 'spill' + (key===todayKey?' today':'') + (key===selectedDate?' sel':'');
+        el.innerHTML = `<div class="d">${d.toLocaleString('en-US',{weekday:'short'})}</div><div class="n">${d.getDate()}</div><div class="flame">${doneCount>0?'🔥'.repeat(Math.min(3,Math.ceil(doneCount/2))):'·'}</div>`;
+        el.addEventListener('click', ()=>{ selectedDate = key; renderAll(); });
+        strip.appendChild(el);
+      }
+    });
+  }
+
+  // ---- Steps ----
+  function renderSteps(){
+    const key = selectedDate;
+    document.getElementById('stepCount').value = state.steps[key] || '';
+    document.getElementById('todayStepsLabel').textContent = state.steps[key]
+      ? `${state.steps[key]} steps logged for ${key}`
+      : `No steps logged for ${key}`;
+  }
+  document.getElementById('saveSteps').addEventListener('click', ()=>{
+    state.steps[selectedDate] = Number(document.getElementById('stepCount').value) || 0;
+    persist(); renderSteps(); showToast('Steps saved');
+  });
+
+  // ---- Water ----
+  const modeCups = document.getElementById('modeCups');
+  const modeBottle = document.getElementById('modeBottle');
+  function renderWater(){
+    ensureWaterDay(selectedDate);
+    const day = state.water[selectedDate];
+    modeCups.classList.toggle('active', day.mode==='cups');
+    modeBottle.classList.toggle('active', day.mode==='bottle');
+    document.getElementById('waterCount').textContent = `${day.count} / ${day.goal}`;
+    document.getElementById('waterLabel').textContent = day.mode==='cups' ? 'cups' : 'bottles';
+    const grid = document.getElementById('waterGrid');
+    grid.innerHTML = '';
+    for(let i=1;i<=day.goal;i++){
+      const btn = document.createElement('button');
+      btn.type='button';
+      if(i<=day.count) btn.classList.add('active');
+      btn.textContent = i;
+      btn.addEventListener('click', ()=>{ day.count = i<=day.count ? i-1 : i; persist(); renderWater(); });
+      grid.appendChild(btn);
+    }
+  }
+  function setMode(mode){
+    const day = state.water[selectedDate];
+    day.mode = mode; day.goal = mode==='cups' ? 8 : 4;
+    if(day.count > day.goal) day.count = day.goal;
+    persist(); renderWater();
+  }
+  modeCups.addEventListener('click', ()=>setMode('cups'));
+  modeBottle.addEventListener('click', ()=>setMode('bottle'));
+  document.getElementById('plusWater').addEventListener('click', ()=>{
+    const day = state.water[selectedDate];
+    if(day.count < day.goal) day.count += 1;
+    persist(); renderWater();
+  });
+
+  // ---- Quests ----
+  function renderQuests(){
+    ensureQuestDay(selectedDate);
+    const day = state.quests[selectedDate];
+    document.getElementById('questDateLabel').textContent = selectedDate===todayKey
+      ? "Check off what you actually did — half-credit days still count."
+      : `Logging for ${selectedDate}.`;
+    const list = document.getElementById('questList');
+    list.innerHTML = '';
+    QUESTS.forEach(q=>{
+      const done = !!day[q.id];
+      const card = document.createElement('div');
+      card.className = 'quest' + (done ? ' done' : '');
+      card.innerHTML = `
+        <div class="qcheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M4 12l5 5L20 6"></path></svg></div>
+        <div class="qbody">
+          <div class="qtitle"><span>${q.icon}</span>${q.title}</div>
+          <div class="qdesc">${q.desc}</div>
+          <div class="qmeta"><span class="qxp">+${q.xp} XP</span><span class="qboss">${BOSSES[q.boss].icon} ${BOSSES[q.boss].name.replace('The ','')}</span></div>
+        </div>`;
+      card.addEventListener('click', ()=> toggleQuest(q));
+      list.appendChild(card);
+    });
+  }
+  function toggleQuest(q){
+    ensureQuestDay(selectedDate);
+    const day = state.quests[selectedDate];
+    const wasDone = !!day[q.id];
+    const prevLevel = levelFromXp(state.xp);
+    if(wasDone){ day[q.id] = false; state.xp = Math.max(0, state.xp - q.xp); }
+    else { day[q.id] = true; state.xp += q.xp; }
+    persist();
+    const newLevel = levelFromXp(state.xp);
+    if(newLevel > prevLevel) showToast(`⚔️ Level up! Now Lv ${newLevel} — ${titleForLevel(newLevel)}`);
+    else if(!wasDone) showToast(`+${q.xp} XP · ${q.title} logged`);
+    renderAll();
+  }
+
+  function currentWeekDates(){
+    const dow = (today.getDay()+6)%7;
+    const monday = new Date(today); monday.setDate(today.getDate()-dow);
+    const days = [];
+    for(let i=0;i<7;i++){ const d = new Date(monday); d.setDate(monday.getDate()+i); if(d<=today) days.push(fmt(d)); }
+    return days;
+  }
+  function isoWeekLabel(d){
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const day = (date.getUTCDay()+6)%7;
+    date.setUTCDate(date.getUTCDate()-day+3);
+    const firstThursday = new Date(Date.UTC(date.getUTCFullYear(),0,4));
+    const week = 1 + Math.round(((date - firstThursday)/86400000 - 3 + ((firstThursday.getUTCDay()+6)%7))/7);
+    return `${date.getUTCFullYear()}-W${pad(week)}`;
+  }
+  function bossDamage(bossId){
+    let dmg = 0;
+    currentWeekDates().forEach(key=>{
+      const day = state.quests[key]; if(!day) return;
+      QUESTS.filter(q=>q.boss===bossId).forEach(q=>{ if(day[q.id]) dmg += q.dmg; });
+    });
+    return dmg;
+  }
+  function renderBosses(){
+    const list = document.getElementById('bossList');
+    list.innerHTML = '';
+    Object.keys(BOSSES).forEach(id=>{
+      const boss = BOSSES[id];
+      const dmg = bossDamage(id);
+      const hpLeft = Math.max(0, boss.hp - dmg);
+      const pct = Math.max(0, Math.min(100, (hpLeft/boss.hp)*100));
+      const defeated = hpLeft<=0;
+      const card = document.createElement('div');
+      card.className = 'boss' + (defeated ? ' defeated' : '');
+      card.innerHTML = `
+        <div class="bosshead">
+          <div class="bossicon">${boss.icon}</div>
+          <div><div class="bossname">${boss.name}</div><div class="bosssub">${defeated?'Slain this week':'Active this week'}</div></div>
+        </div>
+        <div class="bossflavor">${boss.flavor}</div>
+        <div class="hpbar"><div class="hpfill" style="width:${pct}%"></div></div>
+        <div class="hprow"><span>${defeated?'<span class="defeatedtag">Defeated 🏆</span>':`${hpLeft} / ${boss.hp} HP`}</span><span>${isoWeekLabel(today)}</span></div>
+      `;
+      list.appendChild(card);
+    });
+  }
+
+  // ---- Journal ----
+  function renderJournal(){
+    document.getElementById('journalDateText').textContent = `Note for ${selectedDate}`;
+    document.getElementById('dayNote').value = state.notes[selectedDate] || '';
+  }
+  document.getElementById('saveNote').addEventListener('click', ()=>{
+    state.notes[selectedDate] = document.getElementById('dayNote').value;
+    persist(); showToast('Note saved');
+  });
+
+  // ---- Export / Import ----
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const payload = { exportedAt:new Date().toISOString(), tracker:"Joel's Forgeborn Quest", data:state };
+    const blob = new Blob([JSON.stringify(payload,null,2)], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `joel-forgeborn-${todayKey}.json`; a.click();
+    URL.revokeObjectURL(url);
+  });
+  const fileInput = document.getElementById('fileInput');
+  document.getElementById('importBtn').addEventListener('click', ()=> fileInput.click());
+  fileInput.addEventListener('change', async (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    try{
+      const parsed = JSON.parse(await file.text());
+      const incoming = parsed.data || parsed;
+      state.xp = Number(incoming.xp)||0;
+      state.quests = incoming.quests || {};
+      state.steps = incoming.steps || {};
+      state.water = incoming.water || {};
+      state.notes = incoming.notes || {};
+      persist(); renderAll(); showToast('Save imported');
+    }catch(err){ showToast('Import failed'); }
+    fileInput.value = '';
+  });
+
+  function renderAll(){
+    renderLevel();
+    renderStats();
+    renderStreak();
+    renderStrips();
+    renderSteps();
+    renderWater();
+    renderQuests();
+    renderBosses();
+    renderJournal();
+  }
+
+  rollTip();
+  renderAll();
+})();
+</script>
+</body>
+</html>
